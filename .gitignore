@@ -8,8 +8,7 @@ __pycache__/
 dist/
 build/
 
-# Output files (allow mds/ directory)
-# *_images/ directories outside mds/ are ignored
+# Output files
 /*_images/
 
 # IDE

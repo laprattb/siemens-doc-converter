@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-PDF to Markdown Converter
+Siemens Documentation Converter
 
-Converts PDF documents to Markdown format, preserving text structure,
-tables, and optionally extracting images.
+Converts Siemens PDF documentation to Markdown format, preserving text
+structure, tables, and optionally extracting images.
 """
 
 import argparse
@@ -125,19 +125,20 @@ def convert_pdf_to_markdown(
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Convert PDF documents to Markdown format",
+        description="Siemens Documentation Converter - Convert PDF documents to Markdown format",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  %(prog)s document.pdf                     # Output to stdout
-  %(prog)s document.pdf -o output.md        # Save to file
+  %(prog)s document.pdf                     # Output to out/document.md
+  %(prog)s document.pdf -o custom.md        # Save to custom path
   %(prog)s document.pdf -p 0 1 2            # Convert only first 3 pages
   %(prog)s document.pdf --images            # Extract images too
-  %(prog)s pdfs -o mds --batch              # Batch convert directory
+  %(prog)s pdfs --batch                     # Batch convert directory to out/
+  %(prog)s pdfs -o custom_dir --batch       # Batch convert to custom directory
         """,
     )
     parser.add_argument("pdf", help="Path to PDF file or source directory (with --batch)")
-    parser.add_argument("-o", "--output", help="Output Markdown file path")
+    parser.add_argument("-o", "--output", help="Output path (default: out/)")
     parser.add_argument(
         "-p",
         "--pages",
@@ -167,11 +168,11 @@ Examples:
 
     args = parser.parse_args()
 
+    if not args.output:
+        args.output = "out"
+
     try:
         if args.batch:
-            if not args.output:
-                print("Error: --batch requires -o/--output for destination directory", file=sys.stderr)
-                sys.exit(1)
             convert_directory(
                 source_dir=args.pdf,
                 output_dir=args.output,
@@ -179,19 +180,21 @@ Examples:
                 force=args.force,
             )
         else:
-            if args.output and Path(args.output).exists() and not args.force:
-                print(f"Skipping (exists): {args.output}")
+            output = Path(args.output)
+            if not output.suffix:
+                output = output / Path(args.pdf).with_suffix(".md").name
+            output_str = str(output)
+            if output.exists() and not args.force:
+                print(f"Skipping (exists): {output_str}")
                 print("Use --force to overwrite")
                 sys.exit(0)
-            result = convert_pdf_to_markdown(
+            convert_pdf_to_markdown(
                 pdf_path=args.pdf,
-                output_path=args.output,
+                output_path=output_str,
                 pages=args.pages,
                 extract_images=args.images,
                 image_dir=args.image_dir,
             )
-            if not args.output:
-                print(result)
     except FileNotFoundError as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Post-process generated Markdown files to clean up table of contents formatting.
+Post-process converted Markdown files to clean up TOC formatting, headers, and footers.
 """
 
 import argparse

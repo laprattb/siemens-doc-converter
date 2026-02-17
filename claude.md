@@ -1,64 +1,68 @@
-# PDF to Markdown Converter
+# Siemens Documentation Converter
 
-A Python utility that converts PDF documents to Markdown format using `pymupdf4llm`, preserving text structure and tables.
+A Python utility that converts Siemens PDF documentation to Markdown format using `pymupdf4llm`, preserving text structure and tables.
 
 ## Project Structure
 
 ```
-pdf-to-md/
-├── pdf_to_md.py      # Main conversion script
-├── requirements.txt  # Dependencies (pymupdf4llm)
-├── pdfs/             # Source PDFs (product documentation)
-│   └── [subfolders]  # Organized by product/category
-└── mds/              # Output markdown files (mirrors pdfs/ structure)
+siemens-doc-converter/
+├── siemens_doc_converter.py  # Main conversion script
+├── postprocess.py            # Post-processing for TOC, headers, footers
+├── requirements.txt          # Dependencies (pymupdf4llm)
+├── pdfs/                     # Source PDFs (product documentation)
+│   └── [subfolders]          # Organized by product/category
+└── out/                      # Output markdown files (mirrors pdfs/ structure)
 ```
 
 ## Environment
 
 Always use the virtual environment:
 ```bash
-.venv\Scripts\python pdf_to_md.py [args]
+.venv/bin/python siemens_doc_converter.py [args]
 ```
 
 ## Usage
 
 ### Batch conversion (recommended)
 ```bash
-# Convert all PDFs in pdfs/ to mds/, preserving folder structure
-.venv\Scripts\python pdf_to_md.py pdfs -o mds --batch
+# Convert all PDFs in pdfs/ to out/, preserving folder structure
+.venv/bin/python siemens_doc_converter.py pdfs --batch
 
 # With image extraction
-.venv\Scripts\python pdf_to_md.py pdfs -o mds --batch --images
+.venv/bin/python siemens_doc_converter.py pdfs --batch --images
+
+# Custom output directory
+.venv/bin/python siemens_doc_converter.py pdfs -o custom_dir --batch
 ```
 
 ### Single file conversion
 ```bash
-# Output to stdout
-.venv\Scripts\python pdf_to_md.py pdfs/document.pdf
+# Output to out/document.md (default)
+.venv/bin/python siemens_doc_converter.py pdfs/document.pdf
 
-# Save to file
-.venv\Scripts\python pdf_to_md.py pdfs/document.pdf -o mds/document.md
+# Save to custom path
+.venv/bin/python siemens_doc_converter.py pdfs/document.pdf -o custom.md
 
 # Convert specific pages (0-indexed)
-.venv\Scripts\python pdf_to_md.py pdfs/document.pdf -p 0 1 2 -o mds/document.md
+.venv/bin/python siemens_doc_converter.py pdfs/document.pdf -p 0 1 2
 
 # Extract images
-.venv\Scripts\python pdf_to_md.py pdfs/document.pdf -o mds/document.md --images --image-dir mds/images
+.venv/bin/python siemens_doc_converter.py pdfs/document.pdf --images
 ```
 
 ### As a module
 ```python
-from pdf_to_md import convert_pdf_to_markdown
+from siemens_doc_converter import convert_pdf_to_markdown
 
 markdown = convert_pdf_to_markdown("pdfs/document.pdf")
-convert_pdf_to_markdown("pdfs/document.pdf", output_path="mds/document.md")
+convert_pdf_to_markdown("pdfs/document.pdf", output_path="out/document.md")
 ```
 
 ## CLI Options
 
 | Option | Description |
 |--------|-------------|
-| `-o, --output` | Output Markdown file path (or directory with --batch) |
+| `-o, --output` | Output path (default: `out/`) |
 | `-p, --pages` | Page numbers to convert (0-indexed, single file only) |
 | `--images` | Extract images from the PDF |
 | `--image-dir` | Directory to save extracted images (single file only) |
@@ -67,9 +71,9 @@ convert_pdf_to_markdown("pdfs/document.pdf", output_path="mds/document.md")
 
 ## Workflow
 
-PDFs in `/pdfs` are converted to Markdown in `/mds`, preserving the folder structure:
-- `pdfs/opint/manual.pdf` -> `mds/opint/manual.md`
-- `pdfs/umc/guide.pdf` -> `mds/umc/guide.md`
+PDFs in `pdfs/` are converted to Markdown in `out/`, preserving the folder structure:
+- `pdfs/opint/manual.pdf` -> `out/opint/manual.md`
+- `pdfs/umc/guide.pdf` -> `out/umc/guide.md`
 
 ## Dependencies
 
