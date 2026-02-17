@@ -10,6 +10,7 @@ build/
 
 # Output files
 /*_images/
+test-output/
 
 # IDE
 .idea/
